@@ -1,0 +1,60 @@
+version: "3"
+services:
+  app:
+    restart: always
+    build:
+      context: ./celery_app
+    volumes:
+      - ./celery_app:/usr/src/app
+    depends_on:
+      - db
+      - redis
+    command: |
+      bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+
+  celery:
+    container_name: celery
+    tty: true
+    build:
+      context: ./celery_app
+    volumes:
+      - ./celery_app:/usr/src/app
+    command: celery -A config worker -l info
+    depends_on:
+      - app
+      - redis
+
+  monitor:
+    container_name: monitor
+    tty: true
+    build:
+      context: ./celery_app
+    volumes:
+      - ./celery_app:/usr/src/app
+    ports:
+      - 5555:5555
+    command: celery -A config flower --port=5555
+    depends_on:
+      - app
+      - redis
+
+  db:
+    platform: linux/amd64
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      MYSQL_ROOT_PASSWORD: local_root_password
+      MYSQL_DATABASE: db
+    ports:
+      - 3306:3306
+    command: --port 3306
+
+  redis:
+    image: redis:latest
+    restart: always
+    tty: true
+    ports:
+      - 6379:6379
