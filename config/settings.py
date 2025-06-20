@@ -122,9 +122,29 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Cache settings
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://redis:6379",
     }
 }
+
+# Celery configurations
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# 'ampq://guest:guest@localhost//'
+# celery files
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_RESULT_EXTENDED = True
+
+# use redis as the result backend
+# CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+# options
+CELERYD_CONCURRENCY = 1
+CELERYD_LOG_FILE = "./celeryd.log"
+CELERYD_LOG_LEVEL = "INFO"
