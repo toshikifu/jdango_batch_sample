@@ -7,6 +7,10 @@ class Command(BaseCommand):
 
         hello_world.apply_async(args=(options['name'],))
 
+        # send bulk tasks to the queue
+        for i in range(options["num"]):
+            hello_world.apply_async(args=(f'World {i}',), countdown=5)
+
         print("====== end =======")
 
     def add_arguments(self, parser):
@@ -14,4 +18,9 @@ class Command(BaseCommand):
             '--name',
             type=str,
             help='Name to greet',
+        )
+        parser.add_argument(
+            "--num",
+            type=int,
+            help="number of task"
         )
