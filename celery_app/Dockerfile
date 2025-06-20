@@ -1,19 +1,19 @@
-FROM python:3.11-slim
+FROM debian:11-slim
 
-ENV PYTHONPATH /usr/src/app
+ENV PATH=/root/.local/bin:$PATH
 
 WORKDIR /usr/src/app
 
-RUN apt update \
-    && apt-get -y install gcc libmariadb-dev \
-    && apt install -y default-mysql-client \
-    && apt-get install -y default-libmysqlclient-dev \
-    && apt install --no-install-recommends -y tzdata \
-    && apt-get install -y git \
-    && apt clean
-
 COPY . /usr/src/app
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt --no-cache-dir
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -LsSf https://astral.sh/uv/0.5.18/install.sh | sh
+
+RUN uv venv \
+    && uv sync
 
 EXPOSE 8000
+
