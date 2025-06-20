@@ -4,10 +4,9 @@ from celery import shared_task
 
 
 @shared_task()
-def hello_world():
+def hello_world(name: str = ""):
     print("start hello world")
-    print("Hello, World!")
-    print("-----"*200)
+    print(f"Hello, {name}")
     print("end hello world")
 
 
