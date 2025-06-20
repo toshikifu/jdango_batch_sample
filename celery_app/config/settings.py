@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     "polls"
 ]
 
@@ -140,9 +141,10 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BROKER_URL = 'redis://redis:6379'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_RESULT_EXTENDED = True
+CELERY_TASK_TRACK_STARTED = True
 
 # use redis as the result backend
-# CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
 
 # options
 CELERYD_CONCURRENCY = 1
